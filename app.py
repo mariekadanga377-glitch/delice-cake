@@ -4,13 +4,19 @@ from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 
-ADMIN_PASSWORD = "1234"
+# 🔐 ADMIN PASSWORD
+ADMIN_PASSWORD = "Delice@2026Secure!"
 
+# 📁 UPLOAD FOLDER
 UPLOAD_FOLDER = "static/images"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
+# 📦 DATA (temporaire)
 posts = []
 
+# -------------------
+# 🌐 PAGE ACCUEIL
+# -------------------
 @app.route("/")
 def home():
     category = request.args.get("category")
@@ -20,10 +26,14 @@ def home():
     else:
         filtered = posts
 
-    return render_template("index.html", posts=filtered, all_posts=posts)
+    return render_template("index.html", posts=filtered)
 
-@app.route("/admin", methods=["GET", "POST"])
+# -------------------
+# 🔐 ADMIN
+# -------------------
+@app.route("/admin-panel-9821", methods=["GET", "POST"])
 def admin():
+
     if request.method == "POST":
 
         if request.form.get("password") != ADMIN_PASSWORD:
@@ -41,9 +51,23 @@ def admin():
             "price": request.form.get("price")
         })
 
-        return redirect("/admin")
+        return redirect("/admin-panel-9821")
 
     return render_template("admin.html")
 
+# -------------------
+# 🛡️ ERREURS
+# -------------------
+@app.errorhandler(404)
+def not_found(e):
+    return "Page introuvable", 404
+
+@app.errorhandler(500)
+def server_error(e):
+    return "Erreur serveur, réessayez plus tard", 500
+
+# -------------------
+# 🚀 LANCEMENT
+# -------------------
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
