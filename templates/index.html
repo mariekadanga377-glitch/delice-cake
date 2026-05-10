@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Délice Cake 🍰</title>
+
+<style>
+body{
+    font-family: Arial;
+    margin:0;
+    background:#fff5f5;
+}
+
+header{
+    background:#d63384;
+    color:white;
+    text-align:center;
+    padding:15px;
+}
+
+.filters{
+    text-align:center;
+    padding:10px;
+}
+
+.filters a{
+    margin:5px;
+    padding:6px 10px;
+    background:#ddd;
+    border-radius:10px;
+    text-decoration:none;
+    color:black;
+    font-size:12px;
+}
+
+.container{
+    display:grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap:10px;
+    padding:10px;
+}
+
+.card{
+    background:white;
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow:0 2px 8px rgba(0,0,0,0.1);
+}
+
+.card img{
+    width:100%;
+    height:140px;
+    object-fit:cover;
+}
+
+.card p{
+    font-size:12px;
+    padding:5px;
+}
+
+.price{
+    font-weight:bold;
+    color:#d63384;
+    padding-left:5px;
+}
+
+.btn{
+    display:block;
+    background:#25D366;
+    color:white;
+    text-align:center;
+    padding:8px;
+    text-decoration:none;
+    font-weight:bold;
+}
+</style>
+
+</head>
+
+<body>
+
+<header>
+<h1>🍰 Délice Cake</h1>
+<p>Maison Délice Pâtisserie</p>
+    <p>🎂 Qualité, goût et amour dans chaque gâteau</p>
+</header>
+
+<div class="filters">
+    <a href="/">Tous</a>
+    <a href="/?category=Anniversaire">Anniversaire</a>
+    <a href="/?category=Mariage">Mariage</a>
+    <a href="/?category=Chocolat">Chocolat</a>
+    <a href="/?category=Sans crème">Sans crème</a>
+    <a href="/?category=Petit déjeuner">Petit déjeuner</a>
+</div>
+
+<div class="container">
+
+{% for p in posts %}
+
+<div class="card">
+    <img src="/static/images/{{ p.image }}">
+    <p>{{ p.desc }}</p>
+    <p class="price">{{ p.price }} FC</p>
+    <a class="btn" href="{{ p.whatsapp }}" target="_blank">
+        Commander 📱
+    </a>
+</div>
+
+{% endfor %}
+
+</div>
+
+</body>
+</html>
