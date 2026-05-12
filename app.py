@@ -39,8 +39,42 @@ init_db()
 # -------------------------
 # 🌐 PAGE ACCUEIL
 # -------------------------
-@app.route("/")
-def home():
+@app.route("/admin-panel-9821", methods=["GET", "POST"])
+def admin():
+
+    if request.method == "POST":
+
+        if request.form.get("password") != ADMIN_PASSWORD:
+            return "❌ mot de passe incorrect"
+
+        file = request.files["image"]
+
+        if file.filename == "":
+            return "❌ aucune image sélectionnée"
+
+        filename = secure_filename(file.filename)
+
+        filepath = os.path.join(UPLOAD_FOLDER, filename)
+        file.save(filepath)
+
+        conn = sqlite3.connect(DATABASE)
+
+        conn.execute(
+            "INSERT INTO posts (image, description, category, price) VALUES (?, ?, ?, ?)",
+            (
+                filename,
+                request.form.get("desc"),
+                request.form.get("category"),
+                request.form.get("price")
+            )
+        )
+
+        conn.commit()
+        conn.close()
+
+        return redirect("/admin-panel-9821")
+
+    return render_template("admin.html")
 
     category = request.args.get("category")
 
