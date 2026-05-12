@@ -165,7 +165,28 @@ footer{
 
 <p class="category">{{ p.category }}</p>
 
-<p>{{ p.description }}</p>
+<details>
+
+<summary style="
+cursor:pointer;
+font-weight:bold;
+color:#d63384;
+margin-bottom:5px;
+">
+Voir description
+</summary>
+
+<p style="
+display:-webkit-box;
+-webkit-line-clamp:2;
+-webkit-box-orient:vertical;
+overflow:hidden;
+text-overflow:ellipsis;
+">
+{{ p.description }}
+</p>
+
+</details>
 
 <p class="price">{{ p.price }} USD</p>
 
