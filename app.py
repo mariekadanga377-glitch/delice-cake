@@ -1,36 +1,70 @@
 from flask import Flask, render_template, request, redirect
 import os
+import sqlite3
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 
-# 🔐 ADMIN PASSWORD
+# 🔐 MOT DE PASSE ADMIN
 ADMIN_PASSWORD = "Delice@2026Secure!"
 
-# 📁 UPLOAD FOLDER
+# 📁 DOSSIER IMAGES
 UPLOAD_FOLDER = "static/images"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-# 📦 DATA (temporaire)
-posts = []
+# 💾 BASE DE DONNÉES
+DATABASE = "database.db"
 
-# -------------------
+# -------------------------
+# 🛠️ CREATION DATABASE
+# -------------------------
+def init_db():
+
+    conn = sqlite3.connect(DATABASE)
+
+    conn.execute("""
+    CREATE TABLE IF NOT EXISTS posts (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        image TEXT,
+        description TEXT,
+        category TEXT,
+        price TEXT
+    )
+    """)
+
+    conn.close()
+
+init_db()
+
+# -------------------------
 # 🌐 PAGE ACCUEIL
-# -------------------
+# -------------------------
 @app.route("/")
 def home():
+
     category = request.args.get("category")
 
+    conn = sqlite3.connect(DATABASE)
+    conn.row_factory = sqlite3.Row
+
     if category:
-        filtered = [p for p in posts if p["category"] == category]
+        posts = conn.execute(
+            "SELECT * FROM posts WHERE category=?",
+            (category,)
+        ).fetchall()
+
     else:
-        filtered = posts
+        posts = conn.execute(
+            "SELECT * FROM posts ORDER BY id DESC"
+        ).fetchall()
 
-    return render_template("index.html", posts=filtered)
+    conn.close()
 
-# -------------------
+    return render_template("index.html", posts=posts)
+
+# -------------------------
 # 🔐 ADMIN
-# -------------------
+# -------------------------
 @app.route("/admin-panel-9821", methods=["GET", "POST"])
 def admin():
 
@@ -40,34 +74,42 @@ def admin():
             return "❌ mot de passe incorrect"
 
         file = request.files["image"]
+
         filename = secure_filename(file.filename)
+
         file.save(os.path.join(UPLOAD_FOLDER, filename))
 
-        posts.append({
-            "image": filename,
-            "desc": request.form.get("desc"),
-            "whatsapp": request.form.get("whatsapp"),
-            "category": request.form.get("category"),
-            "price": request.form.get("price")
-        })
+        desc = request.form.get("desc")
+        category = request.form.get("category")
+        price = request.form.get("price")
+
+        conn = sqlite3.connect(DATABASE)
+
+        conn.execute(
+            "INSERT INTO posts (image, description, category, price) VALUES (?, ?, ?, ?)",
+            (filename, desc, category, price)
+        )
+
+        conn.commit()
+        conn.close()
 
         return redirect("/admin-panel-9821")
 
     return render_template("admin.html")
 
-# -------------------
+# -------------------------
 # 🛡️ ERREURS
-# -------------------
+# -------------------------
 @app.errorhandler(404)
 def not_found(e):
     return "Page introuvable", 404
 
 @app.errorhandler(500)
 def server_error(e):
-    return "Erreur serveur, réessayez plus tard", 500
+    return "Erreur serveur", 500
 
-# -------------------
+# -------------------------
 # 🚀 LANCEMENT
-# -------------------
+# -------------------------
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
