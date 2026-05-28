@@ -1,92 +1,54 @@
-from flask import Flask, render_template, request, redirect
 import os
 import sqlite3
+from flask import Flask, render_template, request, redirect, url_for, session
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 
-# 🔐 MOT DE PASSE ADMIN
-ADMIN_PASSWORD = "Delice@2026Secure!"
+# =========================
+# CONFIG
+# =========================
+app.secret_key = "delicecake_secret_2026"
 
-# 📁 DOSSIER IMAGES
 UPLOAD_FOLDER = "static/images"
+DATABASE = "database.db"
+ADMIN_PASSWORD = "1234"
+
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-# 💾 BASE DE DONNÉES
-DATABASE = "database.db"
-
-# -------------------------
-# 🛠️ CREATION DATABASE
-# -------------------------
+# =========================
+# DATABASE INIT
+# =========================
 def init_db():
-
     conn = sqlite3.connect(DATABASE)
-
     conn.execute("""
-    CREATE TABLE IF NOT EXISTS posts (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        image TEXT,
-        description TEXT,
-        category TEXT,
-        price TEXT
-    )
+        CREATE TABLE IF NOT EXISTS posts (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            image TEXT,
+            description TEXT,
+            category TEXT,
+            price TEXT
+        )
     """)
-
+    conn.commit()
     conn.close()
 
 init_db()
 
-# -------------------------
-# 🌐 PAGE ACCUEIL
-# -------------------------
-@app.route("/admin-panel-9821", methods=["GET", "POST"])
-def admin():
-
-    if request.method == "POST":
-
-        if request.form.get("password") != ADMIN_PASSWORD:
-            return "❌ mot de passe incorrect"
-
-        file = request.files["image"]
-
-        if file.filename == "":
-            return "❌ aucune image sélectionnée"
-
-        filename = secure_filename(file.filename)
-
-        filepath = os.path.join(UPLOAD_FOLDER, filename)
-        file.save(filepath)
-
-        conn = sqlite3.connect(DATABASE)
-
-        conn.execute(
-            "INSERT INTO posts (image, description, category, price) VALUES (?, ?, ?, ?)",
-            (
-                filename,
-                request.form.get("desc"),
-                request.form.get("category"),
-                request.form.get("price")
-            )
-        )
-
-        conn.commit()
-        conn.close()
-
-        return redirect("/admin-panel-9821")
-
-    return render_template("admin.html")
-
+# =========================
+# HOME
+# =========================
+@app.route("/")
+def index():
     category = request.args.get("category")
 
     conn = sqlite3.connect(DATABASE)
-    conn.row_factory = sqlite3.Row
 
     if category:
         posts = conn.execute(
-            "SELECT * FROM posts WHERE category=?",
+            "SELECT * FROM posts WHERE category=? ORDER BY id DESC",
             (category,)
         ).fetchall()
-
     else:
         posts = conn.execute(
             "SELECT * FROM posts ORDER BY id DESC"
@@ -96,56 +58,92 @@ def admin():
 
     return render_template("index.html", posts=posts)
 
-# -------------------------
-# 🔐 ADMIN
-# -------------------------
-@app.route("/admin-panel-9821", methods=["GET", "POST"])
+# =========================
+# CAKE DETAIL
+# =========================
+@app.route("/cake/<int:id>")
+def cake(id):
+    conn = sqlite3.connect(DATABASE)
+    cake = conn.execute("SELECT * FROM posts WHERE id=?", (id,)).fetchone()
+    conn.close()
+
+    return render_template("cake.html", cake=cake)
+
+# =========================
+# LOGIN ADMIN
+# =========================
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        if request.form.get("password") == ADMIN_PASSWORD:
+            session["admin"] = True
+            return redirect("/admin")
+        return "❌ mot de passe incorrect"
+
+    return render_template("login.html")
+
+# =========================
+# ADMIN PANEL
+# =========================
+@app.route("/admin", methods=["GET", "POST"])
 def admin():
+    if not session.get("admin"):
+        return redirect("/login")
 
     if request.method == "POST":
 
-        if request.form.get("password") != ADMIN_PASSWORD:
-            return "❌ mot de passe incorrect"
+        file = request.files.get("image")
 
-        file = request.files["image"]
+        if not file or file.filename == "":
+            return "❌ image manquante"
 
         filename = secure_filename(file.filename)
-
-        file.save(os.path.join(UPLOAD_FOLDER, filename))
-
-        desc = request.form.get("desc")
-        category = request.form.get("category")
-        price = request.form.get("price")
+        filepath = os.path.join(UPLOAD_FOLDER, filename)
+        file.save(filepath)
 
         conn = sqlite3.connect(DATABASE)
-
         conn.execute(
             "INSERT INTO posts (image, description, category, price) VALUES (?, ?, ?, ?)",
-            (filename, desc, category, price)
+            (
+                filename,
+                request.form.get("desc"),
+                request.form.get("category"),
+                request.form.get("price")
+            )
         )
-
         conn.commit()
         conn.close()
 
-        return redirect("/admin-panel-9821")
+        return redirect("/admin")
 
     return render_template("admin.html")
 
-# -------------------------
-# 🛡️ ERREURS
-# -------------------------
-@app.errorhandler(404)
-def not_found(e):
-    return "Page introuvable", 404
+# =========================
+# DELETE
+# =========================
+@app.route("/delete/<int:id>")
+def delete(id):
+    if not session.get("admin"):
+        return redirect("/login")
 
-@app.errorhandler(500)
-def server_error(e):
-    return "Erreur serveur", 500
+    conn = sqlite3.connect(DATABASE)
+    conn.execute("DELETE FROM posts WHERE id=?", (id,))
+    conn.commit()
+    conn.close()
 
-# -------------------------
-# 🚀 LANCEMENT
-# -------------------------
+    return redirect("/admin")
+
+# =========================
+# LOGOUT
+# =========================
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/")
+
+# =========================
+# RUN
+# =========================
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000)
-    # nouveau changement
-    print("mise a jour")
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port, debug=True)

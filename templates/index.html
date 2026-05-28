@@ -1,127 +1,43 @@
 <!DOCTYPE html>
-<html lang="fr">
-
+<html>
 <head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Délice Cake 🍰</title>
-
-<meta property="og:title" content="Délice Cake 🍰">
-<meta property="og:description" content="Transformons vos événements en souvenirs délicieux 🎉">
-<meta property="og:image" content="/static/images/logo.jpg">
+<title>Délice Cake</title>
 
 <style>
-
-body{
-    margin:0;
-    font-family:Arial;
-    background:#fff5f5;
-}
+body{font-family:Arial;background:#fff5f5;margin:0}
 
 header{
-    background:#d63384;
-    color:white;
-    text-align:center;
-    padding:20px;
-}
-
-header img{
-    width:90px;
-    height:90px;
-    border-radius:50%;
-    object-fit:cover;
-    border:3px solid white;
-}
-
-.filters{
-    text-align:center;
-    padding:10px;
-}
-
-.filters a{
-    display:inline-block;
-    margin:5px;
-    padding:8px 14px;
-    background:white;
-    color:#d63384;
-    text-decoration:none;
-    border-radius:20px;
-    font-size:13px;
-    font-weight:bold;
-    box-shadow:0 2px 5px rgba(0,0,0,0.1);
+background:#d63384;color:white;text-align:center;padding:20px;
 }
 
 .container{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:10px;
-    padding:10px;
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:10px;
+padding:10px;
 }
 
 .card{
-    background:white;
-    border-radius:15px;
-    overflow:hidden;
-    box-shadow:0 2px 8px rgba(0,0,0,0.1);
+background:white;border-radius:10px;overflow:hidden;
 }
 
 .card img{
-    width:100%;
-    height:170px;
-    object-fit:cover;
+width:100%;height:170px;object-fit:cover;
 }
 
-.card-content{
-    padding:10px;
-}
-
-.cake-id{
-    color:#999;
-    font-size:12px;
-}
-
-.category{
-    color:#d63384;
-    font-size:13px;
-    font-weight:bold;
-}
-
-.price{
-    font-size:16px;
-    font-weight:bold;
-}
+.card-content{padding:10px}
 
 .btn{
-    display:block;
-    background:#25D366;
-    color:white;
-    text-align:center;
-    padding:12px;
-    text-decoration:none;
-    font-weight:bold;
-    transition:0.3s;
+display:block;background:#25D366;color:white;
+text-align:center;padding:10px;text-decoration:none;
 }
 
-.btn:hover{
-    background:#1ebd5a;
-}
+.filters{text-align:center;padding:10px}
 
-.empty{
-    text-align:center;
-    padding:30px;
-    color:#777;
+.filters a{
+margin:5px;padding:8px 12px;background:white;
+text-decoration:none;border-radius:20px;
 }
-
-footer{
-    background:#222;
-    color:white;
-    text-align:center;
-    padding:20px;
-    margin-top:20px;
-}
-
 </style>
 
 </head>
@@ -129,27 +45,16 @@ footer{
 <body>
 
 <header>
-
-<img src="/static/images/logo.jpg">
-
-<h1>🍰 Délice Cake</h1>
-
-<p>Transformons vos événements en souvenirs délicieux 🎉</p>
-
+<h2>🍰 Délice Cake</h2>
+<p>Commandez vos gâteaux facilement</p>
 </header>
 
 <div class="filters">
-
 <a href="/">Tous</a>
 <a href="/?category=Anniversaire">Anniversaire</a>
 <a href="/?category=Mariage">Mariage</a>
 <a href="/?category=Chocolat">Chocolat</a>
-<a href="/?category=Sans crème">Sans crème</a>
-<a href="/?category=Petit déjeuner">Petit déjeuner</a>
-
 </div>
-
-{% if posts %}
 
 <div class="container">
 
@@ -157,49 +62,20 @@ footer{
 
 <div class="card">
 
-<img src="/static/images/{{ p.image }}">
+<a href="/cake/{{ p[0] }}">
+
+<img src="{{ url_for('static', filename='images/' + p[1]) }}">
+
+</a>
 
 <div class="card-content">
-
-<p class="cake-id">Gâteau #{{ p.id }}</p>
-
-<p class="category">{{ p.category }}</p>
-
-<details>
-
-<summary style="
-cursor:pointer;
-font-weight:bold;
-color:#d63384;
-margin-bottom:5px;
-">
-Voir description
-</summary>
-
-<p style="
-display:-webkit-box;
--webkit-line-clamp:2;
--webkit-box-orient:vertical;
-overflow:hidden;
-text-overflow:ellipsis;
-">
-{{ p.description }}
-</p>
-
-</details>
-
-<p class="price">{{ p.price }} USD</p>
-
+<p>{{ p[2] }}</p>
+<p>{{ p[4] }} USD</p>
 </div>
 
 <a class="btn"
-
-href="https://wa.me/243976241345?text=Bonjour,%20je%20veux%20commander%20le%20gâteau%20%23{{ p.id }}%20🍰%0A%0ADescription:%20{{ p.description }}%0ACatégorie:%20{{ p.category }}%0APrix:%20{{ p.price }}%20FC"
-
-target="_blank">
-
-Commander 📱
-
+href="https://wa.me/243976241345?text=Je%20veux%20commander%20le%20gâteau%20%23{{ p[0] }}">
+Commander
 </a>
 
 </div>
@@ -207,24 +83,6 @@ Commander 📱
 {% endfor %}
 
 </div>
-
-{% else %}
-
-<div class="empty">
-
-<h3>Aucun gâteau disponible 🍰</h3>
-
-</div>
-
-{% endif %}
-
-<footer>
-
-<p>📱 WhatsApp Délice Cake</p>
-
-<p>Délice Cake — l’art du gâteau raffiné 🍰</p>
-
-</footer>
 
 </body>
 </html>

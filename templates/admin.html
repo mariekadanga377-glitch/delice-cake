@@ -1,15 +1,25 @@
+<!DOCTYPE html>
+<html>
+<body style="font-family:Arial;text-align:center">
+
+<h2>Admin Panel 🍰</h2>
+
 <form method="POST" enctype="multipart/form-data">
 
-<input type="password" name="password" placeholder="Mot de passe">
+<input type="file" name="image"><br><br>
+<input type="text" name="desc" placeholder="Description"><br><br>
 
-<input type="file" name="image">
+<select name="category">
+<option>Anniversaire</option>
+<option>Mariage</option>
+<option>Chocolat</option>
+</select><br><br>
 
-<input type="text" name="desc" placeholder="Description">
+<input type="text" name="price" placeholder="Prix"><br><br>
 
-<input type="text" name="category" placeholder="Catégorie">
-
-<input type="text" name="price" placeholder="Prix">
-
-<button type="submit">Publier</button>
+<button>Publier</button>
 
 </form>
+
+</body>
+</html>
