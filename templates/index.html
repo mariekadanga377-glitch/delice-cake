@@ -1,15 +1,66 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-<title>Délice Cake</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Délice Cake 🍰</title>
 
 <style>
-body{font-family:Arial;background:#fff5f5;margin:0}
 
-header{
-background:#d63384;color:white;text-align:center;padding:20px;
+body{
+margin:0;
+font-family:Arial;
+background:#f7f7f7;
 }
 
+/* HEADER PRO */
+header{
+background:linear-gradient(135deg,#d63384,#ff4d6d);
+color:white;
+padding:25px;
+text-align:center;
+}
+
+header img{
+width:80px;
+height:80px;
+border-radius:50%;
+object-fit:cover;
+border:3px solid white;
+margin-bottom:10px;
+}
+
+/* HERO */
+.hero{
+text-align:center;
+padding:20px;
+background:white;
+}
+
+.hero h2{
+margin:5px;
+}
+
+/* FILTERS */
+.filters{
+display:flex;
+gap:8px;
+overflow-x:auto;
+padding:10px;
+background:white;
+}
+
+.filters a{
+flex:0 0 auto;
+padding:8px 12px;
+background:#eee;
+border-radius:20px;
+text-decoration:none;
+color:#333;
+font-size:13px;
+}
+
+/* PRODUCTS GRID */
 .container{
 display:grid;
 grid-template-columns:repeat(2,1fr);
@@ -18,26 +69,56 @@ padding:10px;
 }
 
 .card{
-background:white;border-radius:10px;overflow:hidden;
+background:white;
+border-radius:15px;
+overflow:hidden;
+box-shadow:0 3px 10px rgba(0,0,0,0.08);
+transition:0.3s;
+}
+
+.card:hover{
+transform:scale(1.02);
 }
 
 .card img{
-width:100%;height:170px;object-fit:cover;
+width:100%;
+height:150px;
+object-fit:cover;
 }
 
-.card-content{padding:10px}
+.card-content{
+padding:10px;
+}
+
+.category{
+font-size:12px;
+color:#d63384;
+font-weight:bold;
+}
+
+.price{
+font-weight:bold;
+margin-top:5px;
+}
 
 .btn{
-display:block;background:#25D366;color:white;
-text-align:center;padding:10px;text-decoration:none;
+display:block;
+background:#25D366;
+color:white;
+text-align:center;
+padding:10px;
+text-decoration:none;
+font-weight:bold;
 }
 
-.filters{text-align:center;padding:10px}
-
-.filters a{
-margin:5px;padding:8px 12px;background:white;
-text-decoration:none;border-radius:20px;
+footer{
+text-align:center;
+padding:20px;
+background:#222;
+color:white;
+margin-top:20px;
 }
+
 </style>
 
 </head>
@@ -45,15 +126,22 @@ text-decoration:none;border-radius:20px;
 <body>
 
 <header>
-<h2>🍰 Délice Cake</h2>
-<p>Commandez vos gâteaux facilement</p>
+<img src="{{ url_for('static', filename='images/logo.jpg') }}">
+<h1>Délice Cake 🍰</h1>
+<p>Le goût du luxe sucré</p>
 </header>
+
+<div class="hero">
+<h2>Nos gâteaux faits maison 🎂</h2>
+<p>Commandez directement sur WhatsApp</p>
+</div>
 
 <div class="filters">
 <a href="/">Tous</a>
 <a href="/?category=Anniversaire">Anniversaire</a>
 <a href="/?category=Mariage">Mariage</a>
 <a href="/?category=Chocolat">Chocolat</a>
+<a href="/?category=Sans crème">Sans crème</a>
 </div>
 
 <div class="container">
@@ -62,20 +150,21 @@ text-decoration:none;border-radius:20px;
 
 <div class="card">
 
-<a href="/cake/{{ p[0] }}">
-
 <img src="{{ url_for('static', filename='images/' + p[1]) }}">
 
-</a>
-
 <div class="card-content">
+
+<div class="category">{{ p[3] }}</div>
+
 <p>{{ p[2] }}</p>
-<p>{{ p[4] }} USD</p>
+
+<div class="price">{{ p[4] }} USD</div>
+
 </div>
 
 <a class="btn"
-href="https://wa.me/243976241345?text=Je%20veux%20commander%20le%20gâteau%20%23{{ p[0] }}">
-Commander
+href="https://wa.me/243976241345?text=Bonjour%20je%20veux%20commander%20le%20gâteau%20%23{{ p[0] }}">
+Commander 📱
 </a>
 
 </div>
@@ -83,6 +172,10 @@ Commander
 {% endfor %}
 
 </div>
+
+<footer>
+Délice Cake — Boutique officielle 🍰
+</footer>
 
 </body>
 </html>
