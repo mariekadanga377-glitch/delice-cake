@@ -7,60 +7,42 @@
 
 <style>
 
-body{
-margin:0;
-font-family:Arial;
-background:#f7f7f7;
-}
+body{margin:0;font-family:Arial;background:#f7f7f7}
 
-/* HEADER PRO */
+/* HEADER */
 header{
 background:linear-gradient(135deg,#d63384,#ff4d6d);
-color:white;
-padding:25px;
 text-align:center;
+color:white;
+padding:20px;
 }
 
 header img{
-width:80px;
-height:80px;
-border-radius:50%;
-object-fit:cover;
-border:3px solid white;
-margin-bottom:10px;
-}
-
-/* HERO */
-.hero{
-text-align:center;
-padding:20px;
-background:white;
-}
-
-.hero h2{
-margin:5px;
+width:100%;
+max-width:300px;
+height:120px;
+object-fit:contain;
 }
 
 /* FILTERS */
 .filters{
 display:flex;
-gap:8px;
 overflow-x:auto;
+gap:8px;
 padding:10px;
 background:white;
 }
 
 .filters a{
-flex:0 0 auto;
 padding:8px 12px;
 background:#eee;
 border-radius:20px;
 text-decoration:none;
-color:#333;
 font-size:13px;
+color:#333;
 }
 
-/* PRODUCTS GRID */
+/* GRID */
 .container{
 display:grid;
 grid-template-columns:repeat(2,1fr);
@@ -68,16 +50,12 @@ gap:10px;
 padding:10px;
 }
 
+/* CARD */
 .card{
 background:white;
 border-radius:15px;
 overflow:hidden;
 box-shadow:0 3px 10px rgba(0,0,0,0.08);
-transition:0.3s;
-}
-
-.card:hover{
-transform:scale(1.02);
 }
 
 .card img{
@@ -86,20 +64,10 @@ height:150px;
 object-fit:cover;
 }
 
-.card-content{
-padding:10px;
-}
+.card-content{padding:10px}
 
-.category{
-font-size:12px;
-color:#d63384;
-font-weight:bold;
-}
-
-.price{
-font-weight:bold;
-margin-top:5px;
-}
+.category{color:#d63384;font-size:12px;font-weight:bold}
+.price{font-weight:bold}
 
 .btn{
 display:block;
@@ -111,12 +79,16 @@ text-decoration:none;
 font-weight:bold;
 }
 
-footer{
-text-align:center;
-padding:20px;
-background:#222;
+/* FLOAT */
+.float{
+position:fixed;
+bottom:20px;
+right:20px;
+background:#25D366;
+padding:15px;
+border-radius:50px;
 color:white;
-margin-top:20px;
+text-decoration:none;
 }
 
 </style>
@@ -127,14 +99,9 @@ margin-top:20px;
 
 <header>
 <img src="{{ url_for('static', filename='images/logo.jpg') }}">
-<h1>Délice Cake 🍰</h1>
+<h2>Délice Cake 🍰</h2>
 <p>Le goût du luxe sucré</p>
 </header>
-
-<div class="hero">
-<h2>Nos gâteaux faits maison 🎂</h2>
-<p>Commandez directement sur WhatsApp</p>
-</div>
 
 <div class="filters">
 <a href="/">Tous</a>
@@ -155,15 +122,13 @@ margin-top:20px;
 <div class="card-content">
 
 <div class="category">{{ p[3] }}</div>
-
 <p>{{ p[2] }}</p>
-
 <div class="price">{{ p[4] }} USD</div>
 
 </div>
 
 <a class="btn"
-href="https://wa.me/243976241345?text=Bonjour%20je%20veux%20commander%20le%20gâteau%20%23{{ p[0] }}">
+href="https://wa.me/243976241345?text=Commande%20gâteau%20%23{{ p[0] }}">
 Commander 📱
 </a>
 
@@ -173,9 +138,9 @@ Commander 📱
 
 </div>
 
-<footer>
-Délice Cake — Boutique officielle 🍰
-</footer>
+<a class="float" href="https://wa.me/243976241345">
+WhatsApp
+</a>
 
 </body>
 </html>

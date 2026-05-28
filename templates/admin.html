@@ -2,24 +2,36 @@
 <html>
 <body style="font-family:Arial;text-align:center">
 
-<h2>Admin Panel 🍰</h2>
+<h2>Admin Dashboard 🍰</h2>
+
+<a href="/logout">Logout</a>
 
 <form method="POST" enctype="multipart/form-data">
 
-<input type="file" name="image"><br><br>
+<input type="file" name="image" accept="image/*" capture="environment"><br><br>
 <input type="text" name="desc" placeholder="Description"><br><br>
 
 <select name="category">
 <option>Anniversaire</option>
 <option>Mariage</option>
 <option>Chocolat</option>
+<option>Sans crème</option>
 </select><br><br>
 
 <input type="text" name="price" placeholder="Prix"><br><br>
 
-<button>Publier</button>
+<button>Ajouter</button>
 
 </form>
+
+<hr>
+
+{% for p in posts %}
+<p>
+{{ p[2] }} - {{ p[4] }} USD
+<a href="/delete/{{ p[0] }}">❌</a>
+</p>
+{% endfor %}
 
 </body>
 </html>
